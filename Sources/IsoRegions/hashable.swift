@@ -1,3 +1,4 @@
+import Internals
 
 public protocol EasyHashable: Hashable {
     static var hashableProperties: [(Self) -> AnyHashable] { get }
@@ -7,7 +8,7 @@ public extension EasyHashable {
     var hashValue: Int {
         return Self.hashableProperties.reduce(
             5381,
-            { $0 * 33 + $1(self).hashValue })
+            { $0 &* 33 &+ $1(self).hashValue })
     }
     
     static func ==(left: Self, right: Self) -> Bool {

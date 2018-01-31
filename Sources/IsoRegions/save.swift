@@ -14,12 +14,8 @@ struct LinesProducerSaveable: Saveable {
     }
 }
 
-// Source: https://gist.github.com/brennanMKE/a0a2ee6aa5a2e2e66297c580c4df0d66
-fileprivate func directoryExists(at: URL) -> Bool {
-    var isDirectory = ObjCBool(true)
-    let exists = FileManager.default.fileExists(atPath: at.path, isDirectory: &isDirectory)
-    
-    return exists && isDirectory.boolValue
+fileprivate func directoryExists(at url: URL) -> Bool {
+    return (try? url.resourceValues(forKeys: [.isDirectoryKey]))?.isDirectory ?? false
 }
 
 func write(content: String, to: URL) throws {

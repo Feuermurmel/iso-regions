@@ -3,8 +3,8 @@
 import PackageDescription
 
 let package = Package(
-    name: "test-project",
+    name: "MyProject",
     dependencies: [
         .package(url: "https://github.com/Feuermurmel/iso-regions.git", from: "0.0.1")],
     targets: [
-        .target(name: "main", dependencies: ["IsoRegions"])])
+        .target(name: "Main", dependencies: ["IsoRegions"])])

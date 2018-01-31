@@ -1,5 +1,5 @@
 import Foundation
 
 public extension Double {
-    static let tau = pi * 2
+    public static let tau = pi * 2
 }
