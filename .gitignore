@@ -1,5 +1,15 @@
+# SwiftPM-specific stuff
 /.build
 /Packages
-/Package.resolved
 /*.xcodeproj
+
+# Output directory during development
 /output/
+
+# We want to develop and test against the newest versions of dependencies
+/Package.resolved
+
+# Users probably want to record the version of this library they used so the
+# template's .gitignore does not ignore the Package.resolved file but we don't
+# want check it in as part of this repostory
+Template/*/Package.resolved
