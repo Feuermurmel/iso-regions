@@ -9,9 +9,7 @@ fileprivate struct Grid2D {
     }
 }
 
-fileprivate struct GridIndex: EasyHashable {
-    static var hashableProperties = defineHashableProperties({ $0.x }, { $0.y })
-    
+fileprivate struct GridIndex {
     let x: Int
     let y: Int
     
@@ -21,6 +19,16 @@ fileprivate struct GridIndex: EasyHashable {
     
     func moved(x: Int, y: Int) -> GridIndex {
         return GridIndex(x: self.x + x, y: self.y + y)
+    }
+}
+
+extension GridIndex: Hashable {
+    var hashValue: Int {
+        return hashItems(x, y)
+    }
+    
+    static func ==(lhs: GridIndex, rhs: GridIndex) -> Bool {
+        return lhs.x == rhs.x && lhs.y == rhs.y
     }
 }
 

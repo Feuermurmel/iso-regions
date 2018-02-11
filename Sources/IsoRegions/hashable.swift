@@ -1,21 +1,20 @@
-import Internals
 
-public protocol EasyHashable: Hashable {
-    static var hashableProperties: [(Self) -> AnyHashable] { get }
+func hashItems() -> Int {
+    return 5381
 }
 
-public extension EasyHashable {
-    var hashValue: Int {
-        return Self.hashableProperties.reduce(
-            5381,
-            { $0 &* 33 &+ $1(self).hashValue })
-    }
-    
-    static func ==(left: Self, right: Self) -> Bool {
-        return Self.hashableProperties.all(where: { $0(left) == $0(right) })
-    }
-    
-    static func defineHashableProperties(_ properties: (Self) -> AnyHashable...) -> [(Self) -> AnyHashable] {
-        return properties
-    }
+func hashItems(_ item1: AnyHashable) -> Int {
+    return hashItems() * 33 + item1.hashValue
+}
+
+func hashItems(_ item1: AnyHashable, _ item2: AnyHashable) -> Int {
+    return hashItems(item1) * 33 + item2.hashValue
+}
+
+func hashItems(_ item1: AnyHashable, _ item2: AnyHashable, _ item3: AnyHashable) -> Int {
+    return hashItems(item1, item2) * 33 + item3.hashValue
+}
+
+func hashItems(_ item1: AnyHashable, _ item2: AnyHashable, _ item3: AnyHashable, _ item4: AnyHashable) -> Int {
+    return hashItems(item1, item2, item3) * 33 + item4.hashValue
 }

@@ -25,7 +25,7 @@ extension Double: Component {
     public static let zero = 0.0
 }
 
-public protocol Composite: Component, EasyHashable {
+public protocol Composite: Component {
     associatedtype ComponentType: Component
 }
 
@@ -92,13 +92,17 @@ public struct Vector2: Vector, Composite2 {
         self.init(cos(angle) * length, sin(angle) * length)
     }
     
+    public var hashValue: Int {
+        return hashItems(x, y)
+    }
+    
+    public static func ==(lhs: Vector2, rhs: Vector2) -> Bool {
+        return lhs.x == rhs.x && lhs.y == rhs.y
+    }
+    
     public typealias ComponentType = Double
     
     public static let zero = Vector2(0, 0)
-    
-    public static let hashableProperties = defineHashableProperties(
-        { $0.x },
-        { $0.y })
     
     public static func *(left: Vector2, right: Vector2) -> Double {
         return left.x * right.x + left.y * right.y
@@ -120,15 +124,19 @@ public struct Matrix2: Matrix, Composite2 {
             Vector2(sin(withRotationOfAngle), cos(withRotationOfAngle)))
     }
     
+    public var hashValue: Int {
+        return hashItems(x, y)
+    }
+    
+    public static func ==(lhs: Matrix2, rhs: Matrix2) -> Bool {
+        return lhs.x == rhs.x && lhs.y == rhs.y
+    }
+    
     public var transposed: Matrix2 {
         return Matrix2(Vector2(x.x, y.x), Vector2(x.y, y.y))
     }
     
     public typealias ComponentType = Vector2
-    
-    public static let hashableProperties = defineHashableProperties(
-        { $0.x },
-        { $0.y })
     
     public static let zero = Matrix2(Vector2.zero, Vector2.zero)
     public static let identity = Matrix2(Vector2(1, 0), Vector2(0, 1))
@@ -169,14 +177,17 @@ public struct Vector3: Vector, Composite3 {
         self.z = z
     }
     
+    public var hashValue: Int {
+        return hashItems(x, y, z)
+    }
+    
+    public static func ==(lhs: Vector3, rhs: Vector3) -> Bool {
+        return lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z
+    }
+    
     public typealias ComponentType = Double
     
     public static let zero = Vector3(0, 0, 0)
-    
-    public static let hashableProperties = defineHashableProperties(
-        { $0.x },
-        { $0.y },
-        { $0.z })
     
     public static func *(left: Vector3, right: Vector3) -> Double {
         return left.x * right.x + left.y * right.y + left.z * right.z
@@ -192,6 +203,14 @@ public struct Matrix3: Matrix, Composite3 {
         self.z = z
     }
     
+    public var hashValue: Int {
+        return hashItems(x, y, z)
+    }
+    
+    public static func ==(lhs: Matrix3, rhs: Matrix3) -> Bool {
+        return lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z
+    }
+    
     public var transposed: Matrix3 {
         return Matrix3(Vector3(x.x, y.x, z.x), Vector3(x.y, y.y, z.y), Vector3(x.y, y.y, z.z))
     }
@@ -200,11 +219,6 @@ public struct Matrix3: Matrix, Composite3 {
     
     public static let zero = Matrix3(Vector3.zero, Vector3.zero, Vector3.zero)
     public static let identity = Matrix3(Vector3(1, 0, 0), Vector3(0, 1, 0), Vector3(0, 0, 1))
-    
-    public static let hashableProperties = defineHashableProperties(
-        { $0.x },
-        { $0.y },
-        { $0.z })
     
     public static func *(left: Matrix3, right: Matrix3) -> Matrix3 {
         return Matrix3(left.x * right, left.y * right, left.z * right)
