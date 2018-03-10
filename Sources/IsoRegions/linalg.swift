@@ -203,6 +203,22 @@ public struct Matrix3: Matrix, Composite3 {
         self.z = z
     }
     
+    public init(withRotationOfAngle angle: Double, aroundAxis axis: Vector3) {
+        let normalizedAxis = axis.normalized
+        let x = normalizedAxis.x
+        let y = normalizedAxis.y
+        let z = normalizedAxis.z
+        let c = cos(angle)
+        let s = sin(angle)
+        let f1: (Double, Double, Double) -> Double = { $0 * $0 + c * ($1 * $1 + $2 * $2) }
+        let f2: (Double, Double, Double) -> Double = { s * $0 + (1 - c) * $1 * $2 }
+        
+        self.init(
+            Vector3(f1(x, y, z), f2(-z, x, y), f2(y, z, x)),
+            Vector3(f2(z, x, y), f1(y, z, x), f2(-x, y, z)),
+            Vector3(f2(-y, z, x), f2(x, y, z), f1(z, x, y)))
+    }
+    
     public var hashValue: Int {
         return hashItems(x, y, z)
     }
