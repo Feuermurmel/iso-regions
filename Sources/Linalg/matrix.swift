@@ -16,28 +16,37 @@ public extension Matrix {
     }
 }
 
-public struct Matrix2: Matrix, Composite2 {
+public struct Matrix2 {
     public let x, y: Vector2
+}
 
+public extension Matrix2 {
+    public init(withRotationOfAngle: Double) {
+        self.init(
+            Vector2(cos(withRotationOfAngle), -sin(withRotationOfAngle)),
+            Vector2(sin(withRotationOfAngle), cos(withRotationOfAngle)))
+    }
+}
+
+extension Matrix2: Group {
+    public static let zero = Matrix2(Vector2.zero, Vector2.zero)
+}
+
+extension Matrix2: Composite2 {
     // See https://bugs.swift.org/browse/SR-3003
     public init(_ x: Vector2, _ y: Vector2) {
         self.x = x
         self.y = y
     }
 
-    public init(withRotationOfAngle: Double) {
-        self.init(
-            Vector2(cos(withRotationOfAngle), -sin(withRotationOfAngle)),
-            Vector2(sin(withRotationOfAngle), cos(withRotationOfAngle)))
-    }
+    public typealias ComponentType = Vector2
+}
 
+extension Matrix2: Matrix {
     public var transposed: Matrix2 {
         return Matrix2(Vector2(x.x, y.x), Vector2(x.y, y.y))
     }
 
-    public typealias ComponentType = Vector2
-
-    public static let zero = Matrix2(Vector2.zero, Vector2.zero)
     public static let identity = Matrix2(Vector2(1, 0), Vector2(0, 1))
 
     public static func *(left: Matrix2, right: Matrix2) -> Matrix2 {
@@ -49,15 +58,11 @@ public struct Matrix2: Matrix, Composite2 {
     }
 }
 
-public struct Matrix3: Matrix, Composite3 {
+public struct Matrix3 {
     public let x, y, z: Vector3
+}
 
-    public init(_ x: Vector3, _ y: Vector3, _ z: Vector3) {
-        self.x = x
-        self.y = y
-        self.z = z
-    }
-
+public extension Matrix3 {
     public init(withRotationOfAngle angle: Double, aroundAxis axis: Vector3) {
         let normalizedAxis = axis.normalized
         let x = normalizedAxis.x
@@ -73,14 +78,27 @@ public struct Matrix3: Matrix, Composite3 {
             Vector3(f2(z, x, y), f1(y, z, x), f2(-x, y, z)),
             Vector3(f2(-y, z, x), f2(x, y, z), f1(z, x, y)))
     }
+}
 
+extension Matrix3: Group {
+    public static let zero = Matrix3(Vector3.zero, Vector3.zero, Vector3.zero)
+}
+
+extension Matrix3: Composite3 {
+    public init(_ x: Vector3, _ y: Vector3, _ z: Vector3) {
+        self.x = x
+        self.y = y
+        self.z = z
+    }
+
+    public typealias ComponentType = Vector3
+}
+
+extension Matrix3: Matrix {
     public var transposed: Matrix3 {
         return Matrix3(Vector3(x.x, y.x, z.x), Vector3(x.y, y.y, z.y), Vector3(x.y, y.y, z.z))
     }
 
-    public typealias ComponentType = Vector3
-
-    public static let zero = Matrix3(Vector3.zero, Vector3.zero, Vector3.zero)
     public static let identity = Matrix3(Vector3(1, 0, 0), Vector3(0, 1, 0), Vector3(0, 0, 1))
 
     public static func *(left: Matrix3, right: Matrix3) -> Matrix3 {
@@ -91,4 +109,3 @@ public struct Matrix3: Matrix, Composite3 {
         return Vector3(left.x * right, left.y * right, left.z * right)
     }
 }
-
