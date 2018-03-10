@@ -12,6 +12,7 @@ public struct JoinInfo {
     let radius: Double
     let type: JoinType
 }
+
 public func fillet(_ radius: Double) -> JoinInfo {
     return JoinInfo(radius: radius, type: .fillet)
 }
@@ -146,13 +147,13 @@ public extension Array where Element == IsoRegion2 {
     }
 }
 
-func zeroOffsetOperation(_ region: IsoRegion2, operation: @escaping (IsoPoint2) -> IsoPoint2) -> IsoRegion2 {
+func zeroOffsetOperation(_ region: IsoRegion2, operation: @escaping (IsoRegion2.Point) -> IsoRegion2.Point) -> IsoRegion2 {
     return IsoRegion2 { coordinate in
         return operation(region.evaluate(atCoordinate: coordinate))
     }
 }
 
-func pointWithLargerValue(_ point1: IsoPoint2, _ point2: IsoPoint2) -> IsoPoint2 {
+func pointWithLargerValue(_ point1: IsoRegion2.Point, _ point2: IsoRegion2.Point) -> IsoRegion2.Point {
     if point1.value > point2.value {
         return point1
     } else {
@@ -166,11 +167,11 @@ func tube(radius: Double, _ region1: IsoRegion2, _ region2: IsoRegion2) -> IsoRe
         let point2 = region2.evaluate(atCoordinate: coordinate)
         let filletPoint = filletShape(point1, point2).point
 
-        return IsoPoint2(value: filletPoint.value - radius, derivative: filletPoint.derivative)
+        return (filletPoint.value - radius, filletPoint.derivative)
     }
 }
 
-fileprivate func filletShape(_ point1: IsoPoint2, _ point2: IsoPoint2) -> (inside: Bool, point: IsoPoint2) {
+fileprivate func filletShape(_ point1: IsoRegion2.Point, _ point2: IsoRegion2.Point) -> (inside: Bool, point: IsoRegion2.Point) {
     let v1 = point1.value
     let v2 = point2.value
     let d1 = point1.derivative
@@ -190,7 +191,7 @@ fileprivate func filletShape(_ point1: IsoPoint2, _ point2: IsoPoint2) -> (insid
     let a = sqrt((2 * v1 * v2 * p - v1 * v1 - v2 * v2) / pp)
     let d = diniMueter / a / pp
 
-    return (inside, IsoPoint2(value: a, derivative: d))
+    return (inside, (a, d))
 }
 
 fileprivate func translation(offset: Vector2, _ region: IsoRegion2) -> IsoRegion2 {
@@ -213,7 +214,7 @@ fileprivate func rotation(angle: Double, _ region: IsoRegion2) -> IsoRegion2 {
         return IsoRegion2 { coordinate in
             let point = region.evaluate(atCoordinate: inverseRotationMatrix * coordinate)
 
-            return IsoPoint2(value: point.value, derivative: rotationMatrix * point.derivative)
+            return (point.value, rotationMatrix * point.derivative)
         }
     }
 }
@@ -226,10 +227,10 @@ fileprivate func scaling(factor: Double, _ region: IsoRegion2) -> IsoRegion2 {
     } else {
         return IsoRegion2 { coordinate in
             let point = region.evaluate(atCoordinate: coordinate / factor)
+            let value = point.value * factor.magnitude
+            let derivative = point.derivative * Double(signOf: factor, magnitudeOf: 1)
 
-            return IsoPoint2(
-                value: point.value * factor.magnitude,
-                derivative: point.derivative * Double(signOf: factor, magnitudeOf: 1))
+            return (value, derivative)
         }
     }
 }
@@ -240,14 +241,14 @@ fileprivate func dilation(distance: Double, _ region: IsoRegion2) -> IsoRegion2 
         return region
     } else {
         return zeroOffsetOperation(region) { point in
-            return IsoPoint2(value: point.value - distance, derivative: point.derivative)
+            return (point.value - distance, point.derivative)
         }
     }
 }
 
 fileprivate func inversion(_ region: IsoRegion2) -> IsoRegion2 {
     return zeroOffsetOperation(region) { point in
-        return IsoPoint2(value: -point.value, derivative: -point.derivative)
+        return (-point.value, -point.derivative)
     }
 }
 
@@ -270,11 +271,10 @@ fileprivate func intersection(type: JoinType, _ region1: IsoRegion2, _ region2: 
             let point1 = region1.evaluate(atCoordinate: coordinate)
             let point2 = region2.evaluate(atCoordinate: coordinate)
             let derivativesSum = point1.derivative + point2.derivative
+            let value = (point1.value + point2.value) / derivativesSum.norm
 
             return pointWithLargerValue(
-                IsoPoint2(
-                    value: (point1.value + point2.value) / derivativesSum.norm,
-                    derivative: derivativesSum.normalized),
+                (value, derivativesSum.normalized),
                 pointWithLargerValue(point1, point2))
         }
     }

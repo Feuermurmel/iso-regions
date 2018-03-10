@@ -3,9 +3,9 @@ import Linalg
 
 public func shell(_ region: IsoRegion2, thickness: Double) -> IsoRegion2 {
     return zeroOffsetOperation(region) { point in
-        return pointWithLargerValue(
-            point,
-            IsoPoint2(value: -point.value - thickness, derivative: -point.derivative))
+        let point2 = (-point.value - thickness, -point.derivative)
+
+        return pointWithLargerValue(point, point2)
     }
 }
 
