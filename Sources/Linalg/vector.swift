@@ -15,6 +15,14 @@ public extension Vector {
     }
 }
 
+extension Double: Vector {
+    public typealias CompatibleMatrix = Double
+
+    public static func outer(left: Double, right: Double) -> Double {
+        return left * right
+    }
+}
+
 public struct Vector2 {
     public let x, y: Double
 }

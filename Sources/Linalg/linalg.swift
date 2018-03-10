@@ -34,6 +34,40 @@ public protocol Composite: Group {
     associatedtype ComponentType: Group
 }
 
+extension Double: Composite {
+    public typealias ComponentType = Double
+}
+
+public protocol Composite1: Composite {
+    var x: ComponentType { get }
+
+    init(_ x: ComponentType)
+}
+
+public extension Composite1 {
+    public static func +(left: Self, right: Self) -> Self {
+        return Self(left.x + right.x)
+    }
+
+    public static func *(left: Self, right: Double) -> Self {
+        return Self(left.x * right)
+    }
+
+    public var hashValue: Int {
+        return hashItems(x)
+    }
+
+    public static func ==(lhs: Self, rhs: Self) -> Bool {
+        return lhs.x == rhs.x
+    }
+}
+
+extension Double: Composite1 {
+    public var x: Double {
+        return self
+    }
+}
+
 public protocol Composite2: Composite {
     var x: ComponentType { get }
     var y: ComponentType { get }

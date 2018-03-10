@@ -16,6 +16,14 @@ public extension Matrix {
     }
 }
 
+extension Double: Matrix {
+    public var transposed: Double {
+        return self
+    }
+
+    public static let identity: Double = 1.0
+}
+
 public struct Matrix2 {
     public let x, y: Vector2
 }
