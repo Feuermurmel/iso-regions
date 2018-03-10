@@ -1,6 +1,6 @@
-import IsoRegions
-import Internals
 import XCTest
+import IsoRegions
+import Util
 
 extension Object2D {
     var area: Double {

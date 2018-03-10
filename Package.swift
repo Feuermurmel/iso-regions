@@ -8,7 +8,8 @@ let package = Package(
         .library(name: "IsoRegions", targets: ["IsoRegions"]),
         .executable(name: "test", targets: ["Test"])],
     targets: [
-        .target(name: "IsoRegions", dependencies: ["Internals"]),
-        .target(name: "Internals"),
+        .target(name: "Util"),
+        .target(name: "Linalg", dependencies: ["Util"]),
+        .target(name: "IsoRegions", dependencies: ["Util", "Linalg"]),
         .target(name: "Test", dependencies: ["IsoRegions"]),
-        .testTarget(name: "UnitTests", dependencies: ["IsoRegions", "Internals"])])
+        .testTarget(name: "UnitTests", dependencies: ["Util", "IsoRegions", "Linalg"])])

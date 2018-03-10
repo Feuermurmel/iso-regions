@@ -1,4 +1,5 @@
 import Foundation
+import Linalg
 
 public struct IsoPoint2 {
     let value: Double

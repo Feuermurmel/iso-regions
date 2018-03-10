@@ -1,4 +1,5 @@
 import Foundation
+import Linalg
 
 infix operator %%: BitwiseShiftPrecedence
 

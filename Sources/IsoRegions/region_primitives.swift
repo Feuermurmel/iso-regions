@@ -1,4 +1,5 @@
 import Foundation
+import Linalg
 
 public func void() -> IsoRegion2 {
     return IsoRegion2 { coordinate in

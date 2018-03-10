@@ -1,3 +1,5 @@
+import Linalg
+
 public struct Boundary2D {
     public let vertex1: Vector2
     public let vertex2: Vector2

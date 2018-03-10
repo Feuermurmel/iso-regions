@@ -1,4 +1,5 @@
 import Foundation
+import Linalg
 
 public func shell(_ region: IsoRegion2, thickness: Double) -> IsoRegion2 {
     return zeroOffsetOperation(region) { point in
