@@ -31,12 +31,13 @@ extension Double: Group {
 }
 
 public protocol Composite: Group {
+    /// The first component or row in any vector or matrix. Having access to this without knowing the exact type is sometimes useful.
+    var x: ComponentType { get }
+
     associatedtype ComponentType: Group
 }
 
 public protocol Composite1: Composite {
-    var x: ComponentType { get }
-
     init(_ x: ComponentType)
 }
 
@@ -65,7 +66,6 @@ extension Double: Composite1 {
 }
 
 public protocol Composite2: Composite {
-    var x: ComponentType { get }
     var y: ComponentType { get }
 
     init(_ x: ComponentType, _ y: ComponentType)
@@ -90,7 +90,6 @@ public extension Composite2 {
 }
 
 public protocol Composite3: Composite {
-    var x: ComponentType { get }
     var y: ComponentType { get }
     var z: ComponentType { get }
 
