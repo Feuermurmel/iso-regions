@@ -1,4 +1,5 @@
 import XCTest
+import Linalg
 import IsoRegions
 import Util
 
