@@ -5,6 +5,8 @@ public protocol Vector: Composite {
     associatedtype CompatibleMatrix: Matrix where CompatibleMatrix.ComponentType == Self
 
     static func *(left: Self, right: Self) -> Double
+
+    static func outer(left: Self, right: Self) -> CompatibleMatrix
 }
 
 public extension Vector {
@@ -58,6 +60,10 @@ extension Vector2: Vector {
     public static func *(left: Vector2, right: Vector2) -> Double {
         return left.x * right.x + left.y * right.y
     }
+
+    public static func outer(left: Vector2, right: Vector2) -> Matrix2 {
+        return Matrix2(left.x * right, left.y * right)
+    }
 }
 
 public struct Vector3 {
@@ -85,5 +91,9 @@ extension Vector3: Vector {
 
     public static func *(left: Vector3, right: Vector3) -> Double {
         return left.x * right.x + left.y * right.y + left.z * right.z
+    }
+
+    public static func outer(left: Vector3, right: Vector3) -> Matrix3 {
+        return Matrix3(left.x * right, left.y * right, left.z * right)
     }
 }
