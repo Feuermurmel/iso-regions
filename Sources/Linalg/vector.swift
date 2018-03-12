@@ -19,12 +19,33 @@ public extension Vector {
     }
 }
 
-extension Double: Vector {
-    public typealias ComponentType = Double
-    public typealias CompatibleMatrix = Double
+public struct Vector1 {
+    public let x: Double
+}
 
-    public static func outer(left: Double, right: Double) -> Double {
-        return left * right
+extension Vector1: Group {
+    public static let zero = Vector1(0)
+}
+
+extension Vector1: Composite {
+    public typealias ComponentType = Double
+}
+
+extension Vector1: Composite1 {
+    public init(_ x: Double) {
+        self.x = x
+    }
+}
+
+extension Vector1: Vector {
+    public typealias CompatibleMatrix = Matrix1
+
+    public static func *(left: Vector1, right: Vector1) -> Double {
+        return left.x * right.x
+    }
+
+    public static func outer(left: Vector1, right: Vector1) -> Matrix1 {
+        return Matrix1(left.x * right)
     }
 }
 

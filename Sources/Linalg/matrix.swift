@@ -19,12 +19,36 @@ public extension Matrix {
     }
 }
 
-extension Double: Matrix {
-    public var transposed: Double {
+public struct Matrix1 {
+    public let x: Vector1
+}
+
+extension Matrix1: Group {
+    public static let zero = Matrix1(Vector1.zero)
+}
+
+extension Matrix1: Composite1 {
+    public init(_ x: Vector1) {
+        self.x = x
+    }
+
+    public typealias ComponentType = Vector1
+}
+
+extension Matrix1: Matrix {
+    public var transposed: Matrix1 {
         return self
     }
 
-    public static let identity: Double = 1.0
+    public static let identity = Matrix1(Vector1(1))
+
+    public static func *(left: Matrix1, right: Matrix1) -> Matrix1 {
+        return Matrix1(left.x * right)
+    }
+
+    public static func *(left: Matrix1, right: Vector1) -> Vector1 {
+        return Vector1(left.x * right)
+    }
 }
 
 public struct Matrix2 {

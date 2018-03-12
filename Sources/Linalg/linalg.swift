@@ -59,12 +59,6 @@ public extension Composite1 {
     }
 }
 
-extension Double: Composite1 {
-    public var x: Double {
-        return self
-    }
-}
-
 public protocol Composite2: Composite {
     var y: ComponentType { get }
 
