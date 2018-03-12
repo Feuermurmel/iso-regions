@@ -2,6 +2,8 @@ import Foundation
 import Util
 
 public protocol Vector: Composite {
+    associatedtype CompatibleMatrix: Matrix where CompatibleMatrix.ComponentType == Self
+
     static func *(left: Self, right: Self) -> Double
 }
 
@@ -16,6 +18,7 @@ public extension Vector {
 }
 
 extension Double: Vector {
+    public typealias ComponentType = Double
     public typealias CompatibleMatrix = Double
 
     public static func outer(left: Double, right: Double) -> Double {
@@ -37,9 +40,11 @@ extension Vector2: Group {
     public static let zero = Vector2(0, 0)
 }
 
-extension Vector2: Composite2 {
+extension Vector2: Composite {
     public typealias ComponentType = Double
+}
 
+extension Vector2: Composite2 {
     // See https://bugs.swift.org/browse/SR-3003
     public init(_ x: Double, _ y: Double) {
         self.x = x
@@ -48,6 +53,8 @@ extension Vector2: Composite2 {
 }
 
 extension Vector2: Vector {
+    public typealias CompatibleMatrix = Matrix2
+
     public static func *(left: Vector2, right: Vector2) -> Double {
         return left.x * right.x + left.y * right.y
     }
@@ -61,9 +68,11 @@ extension Vector3: Group {
     public static let zero = Vector3(0, 0, 0)
 }
 
-extension Vector3: Composite3 {
+extension Vector3: Composite {
     public typealias ComponentType = Double
+}
 
+extension Vector3: Composite3 {
     public init(_ x: Double, _ y: Double, _ z: Double) {
         self.x = x
         self.y = y
@@ -72,6 +81,8 @@ extension Vector3: Composite3 {
 }
 
 extension Vector3: Vector {
+    public typealias CompatibleMatrix = Matrix3
+
     public static func *(left: Vector3, right: Vector3) -> Double {
         return left.x * right.x + left.y * right.y + left.z * right.z
     }

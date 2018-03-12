@@ -1,8 +1,11 @@
 import Foundation
 import Util
 
-public protocol Matrix: Composite {
+// TODO: Declare Matrix with "where ComponentType: Vector" once this isn't crashing swiftc anymore.
+public protocol Matrix: Composite where ComponentType: Vector, ComponentType.CompatibleMatrix == Self {
     var transposed: Self { get }
+
+    typealias CompatibleVector = ComponentType
 
     static var identity: Self { get }
 

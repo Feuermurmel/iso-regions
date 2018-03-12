@@ -34,10 +34,6 @@ public protocol Composite: Group {
     associatedtype ComponentType: Group
 }
 
-extension Double: Composite {
-    public typealias ComponentType = Double
-}
-
 public protocol Composite1: Composite {
     var x: ComponentType { get }
 
