@@ -1,6 +1,7 @@
 import Foundation
 import Util
 
+// TODO: We should have a `public typealias ComponentType = Double` here, but swiftc crashes if we do.
 public protocol Vector: Composite {
     associatedtype CompatibleMatrix: Matrix where CompatibleMatrix.ComponentType == Self
 
@@ -28,6 +29,7 @@ extension Vector1: Group {
 }
 
 extension Vector1: Composite {
+    // TODO: This becomes redundant once we can move it to protocol Vector.
     public typealias ComponentType = Double
 }
 
@@ -64,6 +66,7 @@ extension Vector2: Group {
 }
 
 extension Vector2: Composite {
+    // TODO: This becomes redundant once we can move it to protocol Vector.
     public typealias ComponentType = Double
 }
 
@@ -96,6 +99,7 @@ extension Vector3: Group {
 }
 
 extension Vector3: Composite {
+    // TODO: This becomes redundant once we can move it to protocol Vector.
     public typealias ComponentType = Double
 }
 
