@@ -122,7 +122,7 @@ fileprivate func render(region: IsoRegion2, grid: Grid2D, levels: Int) -> Shape2
 
         let value = regionPointsByIndex[
             index,
-            default: region.evaluate(atCoordinate: coordinate).value]
+            default: region.evaluateAt(coordinate).value]
 
         return RegionPoint(coordinate: coordinate, value: value)
     }

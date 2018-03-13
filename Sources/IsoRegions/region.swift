@@ -6,11 +6,11 @@ public struct IsoRegion2 {
 
     private let evaluateFn: (Vector2) -> Point
 
-    init(_ evaluateFn: @escaping (_ atCoordinate: Vector2) -> Point) {
+    init(_ evaluateFn: @escaping (Vector2) -> Point) {
         self.evaluateFn = evaluateFn
     }
 
-    func evaluate(atCoordinate: Vector2) -> Point {
-        return evaluateFn(atCoordinate)
+    func evaluateAt(_ coordinate: Vector2) -> Point {
+        return evaluateFn(coordinate)
     }
 }

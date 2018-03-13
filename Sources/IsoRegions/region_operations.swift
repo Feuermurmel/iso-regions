@@ -149,7 +149,7 @@ public extension Array where Element == IsoRegion2 {
 
 func zeroOffsetOperation(_ region: IsoRegion2, operation: @escaping (IsoRegion2.Point) -> IsoRegion2.Point) -> IsoRegion2 {
     return IsoRegion2 { coordinate in
-        return operation(region.evaluate(atCoordinate: coordinate))
+        return operation(region.evaluateAt(  coordinate))
     }
 }
 
@@ -163,8 +163,8 @@ func pointWithLargerValue(_ point1: IsoRegion2.Point, _ point2: IsoRegion2.Point
 
 func tube(radius: Double, _ region1: IsoRegion2, _ region2: IsoRegion2) -> IsoRegion2 {
     return IsoRegion2 { coordinate in
-        let point1 = region1.evaluate(atCoordinate: coordinate)
-        let point2 = region2.evaluate(atCoordinate: coordinate)
+        let point1 = region1.evaluateAt(coordinate)
+        let point2 = region2.evaluateAt(coordinate)
         let filletPoint = filletShape(point1, point2).point
 
         return (filletPoint.value - radius, filletPoint.derivative)
@@ -199,7 +199,7 @@ fileprivate func translation(offset: Vector2, _ region: IsoRegion2) -> IsoRegion
         return region
     } else {
         return IsoRegion2 { coordinate in
-            return region.evaluate(atCoordinate: coordinate - offset)
+            return region.evaluateAt(coordinate - offset)
         }
     }
 }
@@ -212,7 +212,7 @@ fileprivate func rotation(angle: Double, _ region: IsoRegion2) -> IsoRegion2 {
         return region
     } else {
         return IsoRegion2 { coordinate in
-            let point = region.evaluate(atCoordinate: inverseRotationMatrix * coordinate)
+            let point = region.evaluateAt(inverseRotationMatrix * coordinate)
 
             return (point.value, rotationMatrix * point.derivative)
         }
@@ -226,7 +226,7 @@ fileprivate func scaling(factor: Double, _ region: IsoRegion2) -> IsoRegion2 {
         return region
     } else {
         return IsoRegion2 { coordinate in
-            let point = region.evaluate(atCoordinate: coordinate / factor)
+            let point = region.evaluateAt(coordinate / factor)
             let value = point.value * factor.magnitude
             let derivative = point.derivative * Double(signOf: factor, magnitudeOf: 1)
 
@@ -256,8 +256,8 @@ fileprivate func intersection(type: JoinType, _ region1: IsoRegion2, _ region2: 
     switch type {
     case .fillet:
         return IsoRegion2 { coordinate in
-            let point1 = region1.evaluate(atCoordinate: coordinate)
-            let point2 = region2.evaluate(atCoordinate: coordinate)
+            let point1 = region1.evaluateAt(coordinate)
+            let point2 = region2.evaluateAt(coordinate)
             let fillet = filletShape(point1, point2)
 
             if fillet.inside {
@@ -268,8 +268,8 @@ fileprivate func intersection(type: JoinType, _ region1: IsoRegion2, _ region2: 
         }
     case .chamfer:
         return IsoRegion2 { coordinate in
-            let point1 = region1.evaluate(atCoordinate: coordinate)
-            let point2 = region2.evaluate(atCoordinate: coordinate)
+            let point1 = region1.evaluateAt(coordinate)
+            let point2 = region2.evaluateAt(coordinate)
             let derivativesSum = point1.derivative + point2.derivative
             let value = (point1.value + point2.value) / derivativesSum.norm
 
