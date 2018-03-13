@@ -1,20 +1,27 @@
 import Linalg
 
-public struct Boundary2D {
+public protocol Boundary {
+}
+
+public struct Boundary1D: Boundary {
+    public let vertex1: Vector1
+}
+
+public struct Boundary2D: Boundary {
     public let vertex1: Vector2
     public let vertex2: Vector2
 }
 
-public struct Shape2D {
-    public let boundary: [Boundary2D]
-}
-
-public struct Boundary3D {
+public struct Boundary3D: Boundary {
     public let vertex1: Vector3
     public let vertex2: Vector3
     public let vertex3: Vector3
 }
 
-public struct Shape3D {
-    public let boundary: [Boundary3D]
+public struct Shape<Boundary: IsoRegions.Boundary> {
+    public let boundary: [Boundary]
 }
+
+public typealias Shape1D = Shape<Boundary1D>
+public typealias Shape2D = Shape<Boundary2D>
+public typealias Shape3D = Shape<Boundary3D>

@@ -3,7 +3,7 @@ import Linalg
 import IsoRegions
 import Util
 
-extension Shape2D {
+extension Shape where Boundary == Boundary2D {
     var area: Double {
         let twiceArea = self.boundary.lazy
             .map({ boundary in
