@@ -46,7 +46,7 @@ func join(lines: [String]) -> String {
     return string
 }
 
-public extension Object2D {
+public extension Shape2D {
     func toSaveable(unitSizeInMetres: Double = 1e-3, lineThicknessInUnits: Double = 0.2, storePhysicalSize: Bool = true) -> Saveable {
         precondition(boundary.count > 0, "Empty object cannot be saved.")
 
@@ -83,7 +83,7 @@ public extension Object2D {
     }
 }
 
-public extension Object3D {
+public extension Shape3D {
     func toSaveable() -> Saveable {
         return LinesProducerSaveable { emitLine in
             emitLine("solid default")

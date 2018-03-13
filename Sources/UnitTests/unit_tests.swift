@@ -3,7 +3,7 @@ import Linalg
 import IsoRegions
 import Util
 
-extension Object2D {
+extension Shape2D {
     var area: Double {
         let twiceArea = self.boundary.lazy
             .map({ boundary in
@@ -21,7 +21,7 @@ extension Object2D {
 
 class UnitTests: XCTestCase {
     func testBoundaryConsistency() {
-        func checkBoundaryConsistency(_ object: Object2D) {
+        func checkBoundaryConsistency(_ object: Shape2D) {
             var segmentsByVertex: [Vector2: (incoming: Int, outgoing: Int)] = [:]
 
             for i in object.boundary {

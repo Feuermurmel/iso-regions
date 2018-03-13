@@ -93,7 +93,7 @@ fileprivate func triangle(_ point1: RegionPoint, _ point2: RegionPoint, _ point3
         vertex2: intersection(focusCorner, endCorner))
 }
 
-fileprivate func render(region: IsoRegion2, grid: Grid2D, levels: Int) -> Object2D {
+fileprivate func render(region: IsoRegion2, grid: Grid2D, levels: Int) -> Shape2D {
     let progressIndicator: ProgressIndicator = createProgressIndicator()
 
     var boundaries: [Boundary2D] = []
@@ -196,10 +196,10 @@ fileprivate func render(region: IsoRegion2, grid: Grid2D, levels: Int) -> Object
 
     log("Search grid has \(1 << (2 * levels)) indices. \(visitedIndices.count) indices have been visited.")
 
-    return Object2D(boundary: boundaries)
+    return Shape2D(boundary: boundaries)
 }
 
-public func render(region: IsoRegion2, resolution: Double, searchCenter: Vector2 = Vector2.zero, searchRange: Double = 1e6) -> Object2D {
+public func render(region: IsoRegion2, resolution: Double, searchCenter: Vector2 = Vector2.zero, searchRange: Double = 1e6) -> Shape2D {
     let grid = Grid2D(origin: searchCenter - Vector2(1, 1) * searchRange / 2, spacing: resolution)
     let levels = Int(exactly: log2(searchRange / resolution).rounded(.up))!
 
