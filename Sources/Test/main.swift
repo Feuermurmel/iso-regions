@@ -1,5 +1,6 @@
 import Foundation
 import IsoRegions
+import Internals
 
 extension Double {
     var degrees: Double {
