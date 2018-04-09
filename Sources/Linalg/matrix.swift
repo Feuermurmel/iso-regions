@@ -19,7 +19,7 @@ public extension Matrix {
     }
 }
 
-public struct Matrix1 {
+public struct Matrix1: Hashable {
     public let x: Vector1
 }
 
@@ -51,7 +51,7 @@ extension Matrix1: Matrix {
     }
 }
 
-public struct Matrix2 {
+public struct Matrix2: Hashable {
     public let x, y: Vector2
 }
 
@@ -93,7 +93,7 @@ extension Matrix2: Matrix {
     }
 }
 
-public struct Matrix3 {
+public struct Matrix3: Hashable {
     public let x, y, z: Vector3
 }
 

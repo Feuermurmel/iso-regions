@@ -49,14 +49,6 @@ public extension Composite1 {
     public static func *(left: Self, right: Double) -> Self {
         return Self(left.x * right)
     }
-
-    public var hashValue: Int {
-        return hashItems(x)
-    }
-
-    public static func ==(lhs: Self, rhs: Self) -> Bool {
-        return lhs.x == rhs.x
-    }
 }
 
 public protocol Composite2: Composite {
@@ -72,14 +64,6 @@ public extension Composite2 {
 
     public static func *(left: Self, right: Double) -> Self {
         return Self(left.x * right, left.y * right)
-    }
-
-    public var hashValue: Int {
-        return hashItems(x, y)
-    }
-
-    public static func ==(lhs: Self, rhs: Self) -> Bool {
-        return lhs.x == rhs.x && lhs.y == rhs.y
     }
 }
 
@@ -97,13 +81,5 @@ public extension Composite3 {
 
     public static func *(left: Self, right: Double) -> Self {
         return Self(left.x * right, left.y * right, left.z * right)
-    }
-
-    public var hashValue: Int {
-        return hashItems(x, y, z)
-    }
-
-    public static func ==(lhs: Self, rhs: Self) -> Bool {
-        return lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z
     }
 }

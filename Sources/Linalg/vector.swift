@@ -19,7 +19,7 @@ public extension Vector {
     }
 }
 
-public struct Vector1 {
+public struct Vector1: Hashable {
     public let x: Double
 }
 
@@ -49,7 +49,7 @@ extension Vector1: Vector {
     }
 }
 
-public struct Vector2 {
+public struct Vector2: Hashable {
     public let x, y: Double
 }
 
@@ -87,7 +87,7 @@ extension Vector2: Vector {
     }
 }
 
-public struct Vector3 {
+public struct Vector3: Hashable {
     public let x, y, z: Double
 }
 

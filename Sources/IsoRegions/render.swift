@@ -11,7 +11,7 @@ fileprivate struct Grid2D {
     }
 }
 
-fileprivate struct GridIndex {
+fileprivate struct GridIndex: Hashable {
     let x: Int
     let y: Int
 
@@ -21,16 +21,6 @@ fileprivate struct GridIndex {
 
     func moved(x: Int, y: Int) -> GridIndex {
         return GridIndex(x: self.x + x, y: self.y + y)
-    }
-}
-
-extension GridIndex: Hashable {
-    var hashValue: Int {
-        return hashItems(x, y)
-    }
-
-    static func ==(lhs: GridIndex, rhs: GridIndex) -> Bool {
-        return lhs.x == rhs.x && lhs.y == rhs.y
     }
 }
 
