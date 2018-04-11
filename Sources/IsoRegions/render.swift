@@ -24,14 +24,6 @@ fileprivate struct GridIndex: Hashable {
     }
 }
 
-fileprivate extension Array {
-    mutating func append(optionalElement: Element?) {
-        if let element = optionalElement {
-            self.append(element)
-        }
-    }
-}
-
 fileprivate struct RegionPoint {
     let coordinate: Vector2
     let value: Double
@@ -148,7 +140,9 @@ fileprivate func render(region: IsoRegion2, grid: Grid2D, levels: Int) -> Shape2
 
     func processGridIndex(_ index: GridIndex) {
         func processTriangle(_ p1: RegionPoint, _ p2: RegionPoint, _ p3: RegionPoint) {
-            boundaries.append(optionalElement: triangle(p1, p2, p3))
+            if let boundary = triangle(p1, p2, p3) {
+                boundaries.append(boundary)
+            }
         }
 
         func processInterface(_ point1: RegionPoint, _ point2: RegionPoint, _ offsetx: Int, _ offsety: Int) {
