@@ -12,7 +12,7 @@ extension Double {
 }
 
 func main() {
-    let c = circle(radius: 1)
+    let c: IsoRegion2 = circle(radius: 1)
 
     let regions = [
         c | c.move(x: 1.8),

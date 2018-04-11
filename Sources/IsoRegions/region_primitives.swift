@@ -1,20 +1,21 @@
 import Foundation
 import Linalg
 
-public func void() -> IsoRegion2 {
-    return IsoRegion2 { coordinate in
-        (.infinity, .zero)
+public func void<R: IsoRegionProtocol>() -> R {
+    return R { coordinate in
+        return (.infinity, .zero)
     }
 }
 
-public func plane() -> IsoRegion2 {
-    return IsoRegion2 { coordinate in
-        (coordinate.x, Vector2(1, 0))
+// TODO: `where R.CoordinateType.ComponentType == Double` becomes redundant once we can move this constraint to protocol Vector.
+public func plane<R: IsoRegionProtocol>() -> R where R.CoordinateType.ComponentType == Double {
+    return R { coordinate in
+        (coordinate.x, R.CoordinateType.CompatibleMatrix.identity.x)
     }
 }
 
-public func circle(radius: Double) -> IsoRegion2 {
-    return IsoRegion2 { coordinate in
+public func circle<R: IsoRegionProtocol>(radius: Double) -> R {
+    return R { coordinate in
         return (coordinate.norm - radius, coordinate.normalized)
     }
 }

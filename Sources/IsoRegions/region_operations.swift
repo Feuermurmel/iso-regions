@@ -21,7 +21,7 @@ public func chamfer(_ radius: Double) -> JoinInfo {
     return JoinInfo(radius: radius, type: .chamfer)
 }
 
-fileprivate let cornerJoin = fillet(0)
+public let cornerJoin = fillet(0)
 
 public protocol JoinInfoArgument {
     var joinInfo: JoinInfo { get }
@@ -39,126 +39,164 @@ extension Double: JoinInfoArgument {
     }
 }
 
-public struct RegionWithJoinInfo {
-    let region: IsoRegion2
+public struct RegionWithJoinInfo<R: IsoRegionProtocol> {
+    let region: R
     let joinInfo: JoinInfo
 }
 
 public protocol JoinArgument {
-    var regionWithJoinInfo: RegionWithJoinInfo { get }
+    associatedtype RegionType: IsoRegionProtocol
+
+    var regionWithJoinInfo: RegionWithJoinInfo<RegionType> { get }
 }
 
 extension RegionWithJoinInfo: JoinArgument {
+    public typealias RegionType = R
+
     public var regionWithJoinInfo: RegionWithJoinInfo {
         return self
     }
 }
 
-extension IsoRegion2: JoinArgument {
-    public var regionWithJoinInfo: RegionWithJoinInfo {
+extension IsoRegion: JoinArgument {
+    public typealias RegionType = IsoRegion<CoordinateType>
+
+    public var regionWithJoinInfo: RegionWithJoinInfo<RegionType> {
         return RegionWithJoinInfo(region: self, joinInfo: cornerJoin)
     }
 }
 
-public extension IsoRegion2 {
-    func move(x: Double = 0, y: Double = 0) -> IsoRegion2 {
-        return move(Vector2(x, y))
-    }
-
-    func move(_ offset: Vector2) -> IsoRegion2 {
+public extension IsoRegionProtocol {
+    func move(_ offset: CoordinateType) -> Self {
         return translation(offset: offset, self)
     }
 
-    func rotate(_ angle: Double, origin: Vector2 = Vector2.zero) -> IsoRegion2 {
-        return rotation(angle: angle, self)
-    }
-
-    func scale(_ factor: Double, origin: Vector2 = Vector2.zero) -> IsoRegion2 {
+    func scale(_ factor: Double, origin: CoordinateType = .zero) -> Self {
         return scaling(factor: factor, self)
     }
 
-    static func <<(left: IsoRegion2, right: Double) -> IsoRegion2 {
+    func mirror(direction: CoordinateType, origin: CoordinateType = .zero) -> Self {
+        return transform(self, withOrigin: origin, mirroring)
+    }
+
+    static func << (left: Self, right: Double) -> Self {
         return dilation(distance: right, left)
     }
 
-    static func <<=(left: inout IsoRegion2, right: Double) {
+    static func <<= (left: inout Self, right: Double) {
         left = left << right
     }
 
-    static func >>(left: IsoRegion2, right: Double) -> IsoRegion2 {
+    static func >> (left: Self, right: Double) -> Self {
         return left << -right
     }
 
-    static func >>=(left: inout IsoRegion2, right: Double) {
+    static func >>= (left: inout Self, right: Double) {
         left = left >> right
     }
 
-    static prefix func ~(value: IsoRegion2) -> IsoRegion2 {
+    static prefix func ~ (value: Self) -> Self {
         return inversion(value)
     }
 
-    static func %%(left: IsoRegion2, right: JoinInfoArgument) -> RegionWithJoinInfo {
-        return RegionWithJoinInfo(region: left, joinInfo: right.joinInfo)
+    static func %% (left: Self, right: JoinInfoArgument) -> RegionWithJoinInfo<Self> {
+        let x = RegionWithJoinInfo(region: left, joinInfo: right.joinInfo)
+        return x
     }
 
-    static func &(left: IsoRegion2, right: JoinArgument) -> IsoRegion2 {
+    static func & <J: JoinArgument>(left: Self, right: J) -> Self where J.RegionType == Self {
         let region = right.regionWithJoinInfo.region
-        let joinInfo: JoinInfo = right.regionWithJoinInfo.joinInfo
+        let joinInfo = right.regionWithJoinInfo.joinInfo
 
         return intersection(type: joinInfo.type, left >> joinInfo.radius, region >> joinInfo.radius) << joinInfo.radius
     }
 
-    static func &=(left: inout IsoRegion2, right: JoinArgument) {
+    static func &= <J: JoinArgument>(left: inout Self, right: J) where J.RegionType == Self {
         left = left & right
     }
 
-    static func |(left: IsoRegion2, right: JoinArgument) -> IsoRegion2 {
+    static func | <J: JoinArgument>(left: Self, right: J) -> Self where J.RegionType == Self {
         return ~(~left & ~right.regionWithJoinInfo.region %% right.regionWithJoinInfo.joinInfo)
     }
 
-    static func |=(left: inout IsoRegion2, right: JoinArgument) {
+    static func |= <J: JoinArgument>(left: inout Self, right: J) where J.RegionType == Self {
         left = left | right
     }
 
-    static func /(left: IsoRegion2, right: JoinArgument) -> IsoRegion2 {
+    static func / <J: JoinArgument>(left: Self, right: J) -> Self where J.RegionType == Self {
         return left & ~right.regionWithJoinInfo.region %% right.regionWithJoinInfo.joinInfo
     }
 
-    static func /=(left: inout IsoRegion2, right: JoinArgument) {
+    static func /= <J: JoinArgument>(left: inout Self, right: J) where J.RegionType == Self {
         left = left / right
     }
 }
 
-public extension Array where Element == IsoRegion2 {
-    public func union(joinInfo: JoinInfoArgument) -> IsoRegion2 {
+public extension IsoRegionProtocol where CoordinateType == Vector1 {
+    func move(x: Double = 0) -> Self {
+        return move(Vector1(x))
+    }
+
+    func mirror(origin: Double = 0) -> Self {
+        return self.mirror(direction: Vector1(1), origin: Vector1(origin))
+    }
+}
+
+public extension IsoRegionProtocol where CoordinateType == Vector2 {
+    func move(x: Double = 0, y: Double = 0) -> Self {
+        return move(Vector2(x, y))
+    }
+
+    func rotate(_ angle: Double, origin: Vector2 = Vector2.zero) -> Self {
+        return transform(self, withOrigin: origin) { rotation(angle: angle, $0) }
+    }
+}
+
+public extension IsoRegionProtocol where CoordinateType == Vector3 {
+    func move(x: Double = 0, y: Double = 0, z: Double = 0) -> Self {
+        return move(Vector3(x, y, z))
+    }
+
+    func rotated(_ angle: Double, axis: Vector3, origin: Vector3 = Vector3.zero) -> Self {
+        return transform(self, withOrigin: origin) { rotation($0, angle: angle, axis: axis) }
+    }
+
+    func rotated(x: Double, y: Double, z: Double, origin: Vector3 = Vector3.zero) -> Self {
+        return transform(self, withOrigin: origin) {
+            return $0
+                .rotated(x, axis: Vector3(1, 0, 0))
+                .rotated(y, axis: Vector3(0, 1, 0))
+                .rotated(z, axis: Vector3(0, 0, 1))
+        }
+    }
+}
+
+public extension Array where Element: IsoRegionProtocol {
+    public func union(joinInfo: JoinInfoArgument = cornerJoin) -> Element {
         return self.reduce(void()) { $0 | $1 %% joinInfo }
     }
 
-    public func union() -> IsoRegion2 {
-        return self.union(joinInfo: cornerJoin)
-    }
-
-    public func intersection(joinInfo: JoinInfoArgument) -> IsoRegion2 {
+    public func intersection(joinInfo: JoinInfoArgument = cornerJoin) -> Element {
         return self.reduce(void()) { $0 & $1 %% joinInfo }
     }
+}
 
-    public func intersection() -> IsoRegion2 {
-        return self.intersection(joinInfo: cornerJoin)
+func zeroOffsetOperation<R: IsoRegionProtocol>(_ region: R, operation: @escaping (R.Point) -> R.Point) -> R {
+    return R { coordinate in
+        return operation(region.evaluateAt(coordinate))
     }
 }
 
-func zeroOffsetOperation(_ region: IsoRegion2, operation: @escaping (IsoRegion2.Point) -> IsoRegion2.Point) -> IsoRegion2 {
-    return IsoRegion2 { coordinate in
-        return operation(region.evaluateAt(  coordinate))
-    }
-}
-
-func pointWithLargerValue(_ point1: IsoRegion2.Point, _ point2: IsoRegion2.Point) -> IsoRegion2.Point {
+func pointWithLargerValue<C: Vector>(_ point1: IsoPoint<C>, _ point2: IsoPoint<C>) -> IsoPoint<C> {
     if point1.value > point2.value {
         return point1
     } else {
         return point2
     }
+}
+
+fileprivate func transform<R: IsoRegionProtocol>(_ region: R, withOrigin origin: R.CoordinateType, _ operation: (R) -> R) -> R {
+    return operation(region.move(-origin)).move(origin)
 }
 
 func tube(radius: Double, _ region1: IsoRegion2, _ region2: IsoRegion2) -> IsoRegion2 {
@@ -171,7 +209,7 @@ func tube(radius: Double, _ region1: IsoRegion2, _ region2: IsoRegion2) -> IsoRe
     }
 }
 
-fileprivate func filletShape(_ point1: IsoRegion2.Point, _ point2: IsoRegion2.Point) -> (inside: Bool, point: IsoRegion2.Point) {
+fileprivate func filletShape<C: Vector>(_ point1: IsoPoint<C>, _ point2: IsoPoint<C>) -> (inside: Bool, point: IsoPoint<C>) {
     let v1 = point1.value
     let v2 = point2.value
     let d1 = point1.derivative
@@ -194,68 +232,91 @@ fileprivate func filletShape(_ point1: IsoRegion2.Point, _ point2: IsoRegion2.Po
     return (inside, (a, d))
 }
 
-fileprivate func translation(offset: Vector2, _ region: IsoRegion2) -> IsoRegion2 {
-    if offset == Vector2.zero {
+fileprivate func translation<R: IsoRegionProtocol>(offset: R.CoordinateType, _ region: R) -> R {
+    if offset == R.CoordinateType.zero {
         return region
-    } else {
-        return IsoRegion2 { coordinate in
-            return region.evaluateAt(coordinate - offset)
-        }
+    }
+
+    return R { coordinate in
+        return region.evaluateAt(coordinate - offset)
     }
 }
 
-fileprivate func rotation(angle: Double, _ region: IsoRegion2) -> IsoRegion2 {
+fileprivate func rotation<R: IsoRegionProtocol>(angle: Double, _ region: R) -> R where R.CoordinateType == Vector2 {
+    if angle == 0 {
+        return region
+    }
+
     let rotationMatrix = Matrix2(withRotationOfAngle: angle)
     let inverseRotationMatrix = Matrix2(withRotationOfAngle: -angle)
 
-    if (angle == 0) {
-        return region
-    } else {
-        return IsoRegion2 { coordinate in
-            let point = region.evaluateAt(inverseRotationMatrix * coordinate)
+    return R { coordinate in
+        let point = region.evaluateAt(inverseRotationMatrix * coordinate)
 
-            return (point.value, rotationMatrix * point.derivative)
-        }
+        return (point.value, rotationMatrix * point.derivative)
     }
 }
 
-fileprivate func scaling(factor: Double, _ region: IsoRegion2) -> IsoRegion2 {
+fileprivate func rotation<R: IsoRegionProtocol>(_ region: R, angle: Double, axis: Vector3) -> R where R.CoordinateType == Vector3 {
+    if angle == 0 {
+        return region
+    }
+
+    let rotationMatrix = Matrix3(withRotationOfAngle: angle, aroundAxis: axis)
+    let inverseRotationMatrix = Matrix3(withRotationOfAngle: -angle, aroundAxis: axis)
+
+    return R { coordinate in
+        let point = region.evaluateAt(inverseRotationMatrix * coordinate)
+
+        return (point.value, rotationMatrix * point.derivative)
+    }
+}
+
+fileprivate func mirroring<R: IsoRegionProtocol>(region: R) -> R {
+    return R { coordinate in
+        let point = region.evaluateAt(-coordinate)
+
+        return (point.value, -point.derivative)
+    }
+}
+
+fileprivate func scaling<R: IsoRegionProtocol>(factor: Double, _ region: R) -> R {
     precondition(factor != 0, "`factor` cannot be zero")
 
-    if (factor == 1) {
+    if factor == 1 {
         return region
-    } else {
-        return IsoRegion2 { coordinate in
-            let point = region.evaluateAt(coordinate / factor)
-            let value = point.value * factor.magnitude
-            let derivative = point.derivative * Double(signOf: factor, magnitudeOf: 1)
+    }
 
-            return (value, derivative)
-        }
+    return R { coordinate in
+        let point = region.evaluateAt(coordinate / factor)
+
+        return (
+            point.value * factor.magnitude,
+            point.derivative * Double(signOf: factor, magnitudeOf: 1))
     }
 }
 
-fileprivate func dilation(distance: Double, _ region: IsoRegion2) -> IsoRegion2 {
+fileprivate func dilation<R: IsoRegionProtocol>(distance: Double, _ region: R) -> R {
     // We implicitly generate dilation operations when joining regions which default to a distance of 0.
     if distance == 0 {
         return region
-    } else {
-        return zeroOffsetOperation(region) { point in
-            return (point.value - distance, point.derivative)
-        }
+    }
+
+    return zeroOffsetOperation(region) { point in
+        return (point.value - distance, point.derivative)
     }
 }
 
-fileprivate func inversion(_ region: IsoRegion2) -> IsoRegion2 {
+fileprivate func inversion<R: IsoRegionProtocol>(_ region: R) -> R {
     return zeroOffsetOperation(region) { point in
         return (-point.value, -point.derivative)
     }
 }
 
-fileprivate func intersection(type: JoinType, _ region1: IsoRegion2, _ region2: IsoRegion2) -> IsoRegion2 {
+fileprivate func intersection<R: IsoRegionProtocol>(type: JoinType, _ region1: R, _ region2: R) -> R {
     switch type {
     case .fillet:
-        return IsoRegion2 { coordinate in
+        return R { coordinate in
             let point1 = region1.evaluateAt(coordinate)
             let point2 = region2.evaluateAt(coordinate)
             let fillet = filletShape(point1, point2)
@@ -267,7 +328,7 @@ fileprivate func intersection(type: JoinType, _ region1: IsoRegion2, _ region2: 
             }
         }
     case .chamfer:
-        return IsoRegion2 { coordinate in
+        return R { coordinate in
             let point1 = region1.evaluateAt(coordinate)
             let point2 = region2.evaluateAt(coordinate)
             let derivativesSum = point1.derivative + point2.derivative
