@@ -19,6 +19,39 @@ public extension Matrix {
     }
 }
 
+public struct Matrix0: Hashable {
+    public init() {
+    }
+}
+
+extension Matrix0: Group {
+    public static let zero = Matrix0()
+}
+
+extension Matrix0: Composite0 {
+    public var x: Vector0 {
+        return .zero
+    }
+
+    public typealias ComponentType = Vector0
+}
+
+extension Matrix0: Matrix {
+    public var transposed: Matrix0 {
+        return self
+    }
+
+    public static let identity = Matrix0()
+
+    public static func *(left: Matrix0, right: Matrix0) -> Matrix0 {
+        return Matrix0()
+    }
+
+    public static func *(left: Matrix0, right: Vector0) -> Vector0 {
+        return Vector0()
+    }
+}
+
 public struct Matrix1: Hashable {
     public let x: Vector1
 }

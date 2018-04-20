@@ -20,6 +20,39 @@ public extension Vector {
     }
 }
 
+public struct Vector0: Hashable {
+    public init() {
+    }
+}
+
+extension Vector0: Group {
+    public static let zero = Vector0()
+}
+
+extension Vector0: Composite {
+    public var x: Double {
+        return 0
+    }
+
+    // TODO: This becomes redundant once we can move it to protocol Vector.
+    public typealias ComponentType = Double
+}
+
+extension Vector0: Composite0 {
+}
+
+extension Vector0: Vector {
+    public typealias CompatibleMatrix = Matrix0
+
+    public static func *(left: Vector0, right: Vector0) -> Double {
+        return 0
+    }
+
+    public static func outer(left: Vector0, right: Vector0) -> Matrix0 {
+        return Matrix0()
+    }
+}
+
 public struct Vector1: Hashable {
     public let x: Double
 }

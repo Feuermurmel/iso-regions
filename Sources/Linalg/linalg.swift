@@ -37,6 +37,20 @@ public protocol Composite: Group {
     associatedtype ComponentType: Group
 }
 
+public protocol Composite0: Composite {
+    init()
+}
+
+public extension Composite0 {
+    public static func +(left: Self, right: Self) -> Self {
+        return Self()
+    }
+
+    public static func *(left: Self, right: Double) -> Self {
+        return Self()
+    }
+}
+
 public protocol Composite1: Composite {
     init(_ x: ComponentType)
 }
