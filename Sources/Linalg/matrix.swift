@@ -24,7 +24,7 @@ public struct Matrix0: Hashable {
     }
 }
 
-extension Matrix0: Group {
+extension Matrix0: Field {
     public static let zero = Matrix0()
 }
 
@@ -56,7 +56,7 @@ public struct Matrix1: Hashable {
     public let x: Vector1
 }
 
-extension Matrix1: Group {
+extension Matrix1: Field {
     public static let zero = Matrix1(Vector1.zero)
 }
 
@@ -96,7 +96,7 @@ public extension Matrix2 {
     }
 }
 
-extension Matrix2: Group {
+extension Matrix2: Field {
     public static let zero = Matrix2(Vector2.zero, Vector2.zero)
 }
 
@@ -148,7 +148,7 @@ public extension Matrix3 {
     }
 }
 
-extension Matrix3: Group {
+extension Matrix3: Field {
     public static let zero = Matrix3(Vector3.zero, Vector3.zero, Vector3.zero)
 }
 

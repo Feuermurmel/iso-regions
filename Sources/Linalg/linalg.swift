@@ -1,14 +1,14 @@
 import Foundation
 import Util
 
-public protocol Group: Hashable {
+public protocol Field: Hashable {
     static var zero: Self { get }
 
     static func +(left: Self, right: Self) -> Self
     static func *(left: Self, right: Double) -> Self
 }
 
-public extension Group {
+public extension Field {
     static prefix func -(value: Self) -> Self {
         return -1.0 * value
     }
@@ -26,15 +26,15 @@ public extension Group {
     }
 }
 
-extension Double: Group {
+extension Double: Field {
     public static let zero = 0.0
 }
 
-public protocol Composite: Group {
+public protocol Composite: Field {
     /// The first component or row in any vector or matrix. Having access to this without knowing the exact type is sometimes useful.
     var x: ComponentType { get }
 
-    associatedtype ComponentType: Group
+    associatedtype ComponentType: Field
 }
 
 public protocol Composite0: Composite {

@@ -25,7 +25,7 @@ public struct Vector0: Hashable {
     }
 }
 
-extension Vector0: Group {
+extension Vector0: Field {
     public static let zero = Vector0()
 }
 
@@ -57,7 +57,7 @@ public struct Vector1: Hashable {
     public let x: Double
 }
 
-extension Vector1: Group {
+extension Vector1: Field {
     public static let zero = Vector1(0)
 }
 
@@ -94,7 +94,7 @@ public extension Vector2 {
     }
 }
 
-extension Vector2: Group {
+extension Vector2: Field {
     public static let zero = Vector2(0, 0)
 }
 
@@ -127,7 +127,7 @@ public struct Vector3: Hashable {
     public let x, y, z: Double
 }
 
-extension Vector3: Group {
+extension Vector3: Field {
     public static let zero = Vector3(0, 0, 0)
 }
 
